@@ -23,7 +23,7 @@ public class Bid {
     @JsonIgnore
     private Project project;
 
-    private Float price;
+    private Double price;
 
     @CreationTimestamp
     private Date placetime;
@@ -52,15 +52,15 @@ public class Bid {
         this.bidder = bidder;
     }
 
-    public Float getPrice() {
+    public Date getPlacetime() {
+        return placetime;
+    }
+
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(Float price) {
+    public void setPrice(Double price) {
         this.price = price;
-    }
-
-    public Date getPlacetime() {
-        return placetime;
     }
 }

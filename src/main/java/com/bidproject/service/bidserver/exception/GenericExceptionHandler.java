@@ -1,6 +1,6 @@
 package com.bidproject.service.bidserver.exception;
 
-import com.bidproject.service.bidserver.seller.SellerNotFoundException;
+import com.bidproject.service.bidserver.seller.NotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +21,8 @@ public class GenericExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<Object>(genericException, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(SellerNotFoundException.class)
-    public final ResponseEntity<Object> handleSellerNotFoundException(SellerNotFoundException e, WebRequest w){
+    @ExceptionHandler(NotFoundException.class)
+    public final ResponseEntity<Object> handleSellerNotFoundException(NotFoundException e, WebRequest w){
         GenericException genericException = new GenericException(e.getMessage(), w.getDescription(false));
         return new ResponseEntity<Object>(genericException, HttpStatus.NOT_FOUND);
     }

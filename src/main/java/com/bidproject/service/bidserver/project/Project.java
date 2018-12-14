@@ -26,6 +26,10 @@ public class Project {
     @OneToMany(mappedBy="project")
     private List<Bid> bids;
 
+    private Integer minBidder = -1;
+
+    private Double minPrice = Double.MAX_VALUE;
+
     @CreationTimestamp
     @Future
     private Date expiry;
@@ -69,5 +73,21 @@ public class Project {
 
     public void setExpiry(Date expiry) {
         this.expiry = expiry;
+    }
+
+    public Integer getMinBidder() {
+        return minBidder;
+    }
+
+    public void setMinBidder(Integer minBidder) {
+        this.minBidder = minBidder;
+    }
+
+    public Double getMinPrice() {
+        return minPrice;
+    }
+
+    public void setMinPrice(Double minPrice) {
+        this.minPrice = minPrice;
     }
 }
