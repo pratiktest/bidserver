@@ -19,6 +19,8 @@ public class Project {
 
     private String description;
 
+    private String title;
+
     @ManyToOne(fetch= FetchType.LAZY)
     @JsonIgnore
     private Seller seller;
@@ -33,6 +35,9 @@ public class Project {
     @CreationTimestamp
     @Future
     private Date expiry;
+
+    @CreationTimestamp
+    private Date createdTime;
 
 
     public Integer getId() {
@@ -89,5 +94,21 @@ public class Project {
 
     public void setMinPrice(Double minPrice) {
         this.minPrice = minPrice;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
     }
 }

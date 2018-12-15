@@ -4,8 +4,12 @@ import com.bidproject.service.bidserver.bid.Bid;
 import com.bidproject.service.bidserver.seller.NotFoundException;
 import com.bidproject.service.bidserver.seller.Seller;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -24,6 +28,14 @@ public class ProjectResource {
             throw new NotFoundException("Project "+ id + " not found");
         }
         return project.get();
+    }
+
+    @GetMapping("/projects")
+    public List<Project> retrieveAllProjects(@RequestParam("page") int page, @RequestParam("size") int size) {
+        Sort sort = new Sort(Sort.Direction.DESC, "createdTime");
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
+        Page<Project> thisPage = projectRepository.findAll(pageRequest);
+        return thisPage.getContent();
     }
 
     @GetMapping("/project/{id}/bids")
