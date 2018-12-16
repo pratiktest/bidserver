@@ -25,12 +25,14 @@ public class Project {
     @JsonIgnore
     private Seller seller;
 
-    @OneToMany(mappedBy="project")
+    @OneToMany(fetch= FetchType.LAZY, mappedBy="project")
     private List<Bid> bids;
 
     private Integer minBidder = -1;
 
     private Double minPrice = Double.MAX_VALUE;
+
+    private Boolean winner = false;
 
     @CreationTimestamp
     @Future
@@ -110,5 +112,13 @@ public class Project {
 
     public void setCreatedTime(Date createdTime) {
         this.createdTime = createdTime;
+    }
+
+    public Boolean getWinner() {
+        return winner;
+    }
+
+    public void setWinner(Boolean winner) {
+        this.winner = winner;
     }
 }

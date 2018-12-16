@@ -1,5 +1,6 @@
 package com.bidproject.service.bidserver.exception;
 
+import com.bidproject.service.bidserver.project.ProjectExpiredException;
 import com.bidproject.service.bidserver.seller.NotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,12 @@ public class GenericExceptionHandler extends ResponseEntityExceptionHandler {
     public final ResponseEntity<Object> handleSellerNotFoundException(NotFoundException e, WebRequest w){
         GenericException genericException = new GenericException(e.getMessage(), w.getDescription(false));
         return new ResponseEntity<Object>(genericException, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ProjectExpiredException.class)
+    public final ResponseEntity<Object> handleProjectExpired(ProjectExpiredException e, WebRequest w){
+        GenericException genericException = new GenericException(e.getMessage(), w.getDescription(false));
+        return new ResponseEntity<Object>(genericException, HttpStatus.BAD_REQUEST);
     }
 
     @Override

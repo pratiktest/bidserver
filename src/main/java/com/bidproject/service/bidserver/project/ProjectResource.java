@@ -31,8 +31,13 @@ public class ProjectResource {
     }
 
     @GetMapping("/projects")
-    public List<Project> retrieveAllProjects(@RequestParam("page") int page, @RequestParam("size") int size) {
+    public List<Project> retrieveAllProjects(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value= "size", required=false) Integer size) {
+
         Sort sort = new Sort(Sort.Direction.DESC, "createdTime");
+        if(page == null || size == null){
+            return projectRepository.findAll(sort);
+        }
+
         PageRequest pageRequest = PageRequest.of(page, size, sort);
         Page<Project> thisPage = projectRepository.findAll(pageRequest);
         return thisPage.getContent();

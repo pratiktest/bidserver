@@ -14,4 +14,14 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
     @Query(value = "update Project p set p.minPrice=?1, p.minBidder=?3 where p.id=?2 and ?1<p.minPrice ")
     int updateMaxBid(Double price, Integer projectId, Integer bidderId);
 
+    @Modifying
+    @Transactional
+    @Query(value = "update Project p set p.minPrice=?1, p.minBidder=-1 where p.id=?2 and p.minBidder=?3 ")
+    int deleteMaxBidder(Double price, Integer projectId, Integer bidderId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update Project p set p.winner=true where p.id=?1")
+    int updateWinner(Integer projectId);
+
 }
