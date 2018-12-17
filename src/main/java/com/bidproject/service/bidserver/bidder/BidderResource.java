@@ -69,7 +69,7 @@ public class BidderResource {
         bid.setProject(project);
         bidRepository.save(bid);
 
-        int rows = projectRepository.updateMaxBid(bid.getPrice(), projectId, bidderId);
+        int rows = projectRepository.updateMaxBid(bid.getPrice(), projectId, bidderId, bid.getId());
         System.out.println(rows);
 
         //gets /sellers from the above uri and appends /{id} to it after which replaces the id template with stored seller id
@@ -77,12 +77,16 @@ public class BidderResource {
         return ResponseEntity.created(location).build();
     }
 
-    @DeleteMapping("/bidder/{bidderId}/project/{projectId}")
-    public ResponseEntity<Object> deleteBid(@PathVariable int bidderId, @PathVariable int projectId) throws NotFoundException, ProjectExpiredException {
-        int updatedRows = projectRepository.deleteMaxBidder(Double.MAX_VALUE, projectId, bidderId);
+    @DeleteMapping("/bidder/{bidderId}/project/{projectId}/bid/{bidId}")
+    public ResponseEntity<Object> deleteBid(@PathVariable int bidderId, @PathVariable int projectId, @PathVariable int bidId) throws NotFoundException, ProjectExpiredException {
+        int updatedRows = projectRepository.deleteMaxBidder(Double.MAX_VALUE, projectId, bidderId, bidId);
         //send response and return do below in a kafka event consumer
-        List<Bid> bids = bidRepository.findByBidderIdAndProjectId(bidderId, projectId);
-        bidRepository.deleteInBatch(bids);
+        Optional<Bid> bid = bidRepository.findById(bidId);
+        if(!bid.isPresent()){
+            throw new NotFoundException("Project "+ projectId + " not found");
+        }
+        bidRepository.delete(bid.get());
+
         List<Bid> projectbids = bidRepository.findByProjectId(projectId);
         projectbids.sort((Bid b1, Bid b2) -> {
             if(b1.getPrice()<b2.getPrice()){
@@ -104,7 +108,8 @@ public class BidderResource {
         if(projectbids != null && projectbids.size()>0 && projectbids.get(0) != null){
             Integer bidder = projectbids.get(0).getBidder().getId();
             Double prPrice = projectbids.get(0).getPrice();
-            projectRepository.updateMaxBid(prPrice, projectId , bidder);
+            Integer minBidId = projectbids.get(0).getId();
+            projectRepository.updateMaxBid(prPrice, projectId , bidder, minBidId);
         }
 
         //send kafka refresh events to sync bids with min bidder

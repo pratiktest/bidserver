@@ -1,6 +1,8 @@
 package com.bidproject.service.bidserver.project;
 
 import com.bidproject.service.bidserver.bid.Bid;
+import com.bidproject.service.bidserver.bid.BidRepository;
+import com.bidproject.service.bidserver.bidder.BidderRepository;
 import com.bidproject.service.bidserver.seller.NotFoundException;
 import com.bidproject.service.bidserver.seller.Seller;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ public class ProjectResource {
 
     @Autowired
     private ProjectRepository projectRepository;
+
+    @Autowired
+    private BidRepository bidRepository;
 
     @GetMapping("/project/{id}")
     public Project getProject(@PathVariable int id) throws NotFoundException {
@@ -50,5 +55,10 @@ public class ProjectResource {
             throw new NotFoundException("Seller "+ id + " not found");
         }
         return project.get().getBids();
+    }
+
+    @GetMapping("/project/{id}/bidder/{bidderId}/bids")
+    public List<Bid> getBidsForProjectOfBidder(@PathVariable int id, @PathVariable int bidderId) throws NotFoundException {
+        return bidRepository.findByBidderIdAndProjectId(bidderId, id);
     }
 }

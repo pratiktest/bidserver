@@ -34,6 +34,8 @@ public class Project {
 
     private Boolean winner = false;
 
+    private Integer bidId = -1;
+
     @CreationTimestamp
     @Future
     private Date expiry;
@@ -120,5 +122,13 @@ public class Project {
 
     public void setWinner(Boolean winner) {
         this.winner = winner;
+    }
+
+    public Integer getBidId() {
+        return bidId;
+    }
+
+    public void setBidId(Integer bidId) {
+        this.bidId = bidId;
     }
 }
