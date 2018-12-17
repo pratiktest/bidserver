@@ -79,23 +79,32 @@ public class BidderResource {
 
     @DeleteMapping("/bidder/{bidderId}/project/{projectId}")
     public ResponseEntity<Object> deleteBid(@PathVariable int bidderId, @PathVariable int projectId) throws NotFoundException, ProjectExpiredException {
-        projectRepository.deleteMaxBidder(Double.MAX_VALUE, projectId, bidderId);
+        int updatedRows = projectRepository.deleteMaxBidder(Double.MAX_VALUE, projectId, bidderId);
         //send response and return do below in a kafka event consumer
-        List<Bid> bids = bidRepository.findByBidderAndProject(bidderId, projectId);
+        List<Bid> bids = bidRepository.findByBidderIdAndProjectId(bidderId, projectId);
         bidRepository.deleteInBatch(bids);
         List<Bid> projectbids = bidRepository.findByProjectId(projectId);
         projectbids.sort((Bid b1, Bid b2) -> {
-            if(b1.getPrice()-b2.getPrice() > 0){
-                return 1;
-            }else if(b1.getPrice()-b2.getPrice() < 0){
+            if(b1.getPrice()<b2.getPrice()){
                 return -1;
+            }else if(b1.getPrice()>b2.getPrice()){
+                return 1;
             }else{
-                return 0;
+                int compareTime = b1.getPlacetime().compareTo(b2.getPlacetime());
+                if(compareTime != 0){
+                    return compareTime;
+                }else {
+                    return 0;
+                }
+
             }
         });
 
+
         if(projectbids != null && projectbids.size()>0 && projectbids.get(0) != null){
-            projectRepository.updateMaxBid(projectbids.get(0).getPrice(), projectbids.get(0).getId(), projectbids.get(0).getBidder().getId());
+            Integer bidder = projectbids.get(0).getBidder().getId();
+            Double prPrice = projectbids.get(0).getPrice();
+            projectRepository.updateMaxBid(prPrice, projectId , bidder);
         }
 
         //send kafka refresh events to sync bids with min bidder

@@ -12,5 +12,5 @@ import java.util.List;
 public interface BidRepository extends JpaRepository<Bid, Integer> {
 
     List<Bid> findByProjectId(Integer projectId);
-    List<Bid> findByBidderAndProject(Integer bidderId, Integer projectId);
+    List<Bid> findByBidderIdAndProjectId(Integer bidderId, Integer projectId);
 }
